@@ -145,23 +145,27 @@ groth16_prover_zkey_file(
 #ifdef __cplusplus
 extern "C" {
 #endif
+    #ifdef __cplusplus
+    namespace rapidsnark {
+    #endif
+        // Struct to return proof results in C-compatible format
+        struct Groth16ProofResultFFI {
+            char *proof;          // Pointer to proof string (must be freed)
+            char *public_inputs;  // Pointer to public inputs string (must be freed)
+            char *error_msg;      // Pointer to error message (if failure, must be freed)
+            int success;          // 1 if success, 0 if failure
+        };
 
-// Struct to return proof results in C-compatible format
-struct Groth16ProofResultFFI {
-    char *proof;          // Pointer to proof string (must be freed)
-    char *public_inputs;  // Pointer to public inputs string (must be freed)
-    char *error_msg;      // Pointer to error message (if failure, must be freed)
-    int success;          // 1 if success, 0 if failure
-};
+        // Function to generate proof via FFI
+        struct Groth16ProofResultFFI generate_groth16_proof_ffi(
+            const char *zkey_data, unsigned long long zkey_size,
+            const char *wtns_data, unsigned long long wtns_size);
 
-// Function to generate proof via FFI
-struct Groth16ProofResultFFI generate_groth16_proof_ffi(
-    const char *zkey_data, unsigned long long zkey_size,
-    const char *wtns_data, unsigned long long wtns_size);
-
-// Function to free memory allocated for FFI struct
-void free_groth16_proof_result(struct Groth16ProofResultFFI result);
-
+        // Function to free memory allocated for FFI struct
+        void free_groth16_proof_result(struct Groth16ProofResultFFI result);
+    #ifdef __cplusplus
+    } // namespace rapidsnark
+    #endif
 #ifdef __cplusplus
 }
 #endif

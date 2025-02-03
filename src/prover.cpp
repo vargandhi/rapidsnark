@@ -550,50 +550,50 @@ Groth16ProofResult generate_groth16_proof(
     return result;
 }
 
-extern "C" {
 
-Groth16ProofResultFFI generate_groth16_proof_ffi(
-    const char *zkey_data, unsigned long long zkey_size,
-    const char *wtns_data, unsigned long long wtns_size)
-{
-    Groth16ProofResultFFI result;
+namespace rapidsnark {
+        Groth16ProofResultFFI generate_groth16_proof_ffi(
+        const char *zkey_data, unsigned long long zkey_size,
+        const char *wtns_data, unsigned long long wtns_size)
+    {
+        Groth16ProofResultFFI result;
 
-    try {
-        // Convert raw buffers to std::vector<char>
-        std::vector<char> zkeyVec(zkey_data, zkey_data + zkey_size);
-        std::vector<char> wtnsVec(wtns_data, wtns_data + wtns_size);
+        try {
+            // Convert raw buffers to std::vector<char>
+            std::vector<char> zkeyVec(zkey_data, zkey_data + zkey_size);
+            std::vector<char> wtnsVec(wtns_data, wtns_data + wtns_size);
 
-        // Call the actual proof function
-        Groth16ProofResult proofResult = generate_groth16_proof(zkeyVec, wtnsVec);
+            // Call the actual proof function
+            Groth16ProofResult proofResult = generate_groth16_proof(zkeyVec, wtnsVec);
 
-        if (!proofResult.success) {
-            // Allocate and return the error message
-            result.error_msg = strdup(proofResult.errorMsg.c_str());
+            if (!proofResult.success) {
+                // Allocate and return the error message
+                result.error_msg = strdup(proofResult.errorMsg.c_str());
+                result.success = 0;
+                return result;
+            }
+
+            // Allocate proof and public input buffers
+            result.proof = strdup(proofResult.proof.c_str());
+            result.public_inputs = strdup(proofResult.publicInputs.c_str());
+            result.error_msg = nullptr;
+            result.success = 1;
+
+        } catch (const std::exception &e) {
+            result.error_msg = strdup(e.what());
             result.success = 0;
-            return result;
         }
 
-        // Allocate proof and public input buffers
-        result.proof = strdup(proofResult.proof.c_str());
-        result.public_inputs = strdup(proofResult.publicInputs.c_str());
-        result.error_msg = nullptr;
-        result.success = 1;
-
-    } catch (const std::exception &e) {
-        result.error_msg = strdup(e.what());
-        result.success = 0;
+        return result;
     }
 
-    return result;
-}
+        // Free memory allocated by generate_groth16_proof_ffi
+        void free_groth16_proof_result(Groth16ProofResultFFI result)
+        {
+            if (result.proof) free(result.proof);
+            if (result.public_inputs) free(result.public_inputs);
+            if (result.error_msg) free(result.error_msg);
+        }
 
-// Free memory allocated by generate_groth16_proof_ffi
-void free_groth16_proof_result(Groth16ProofResultFFI result)
-{
-    if (result.proof) free(result.proof);
-    if (result.public_inputs) free(result.public_inputs);
-    if (result.error_msg) free(result.error_msg);
-}
-
-}
+    }
 
