@@ -153,6 +153,8 @@ extern "C" {
             char *proof;          // Pointer to proof string (must be freed)
             char *public_inputs;  // Pointer to public inputs string (must be freed)
             char *error_msg;      // Pointer to error message (if failure, must be freed)
+            unsigned char *wtns_binary; // raw witness binary data
+            unsigned long long wtns_binary_size; // size of raw witness binary data
             int success;          // 1 if success, 0 if failure
         };
 

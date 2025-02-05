@@ -23,25 +23,25 @@ int main(int argc, char **argv)
 
         char errorMessage[256];
 
-        const int error = groth16_verify(proof.dataAsString().c_str(),
-                                         inputs.dataAsString().c_str(),
-                                         key.dataAsString().c_str(),
-                                         errorMessage, sizeof(errorMessage));
+    // const int error = groth16_verify(proof.dataAsString().c_str(),
+    //                                      inputs.dataAsString().c_str(),
+    //                                      key.dataAsString().c_str(),
+    //                                      errorMessage, sizeof(errorMessage));
 
-        if (error == VERIFIER_VALID_PROOF) {
+    //     if (error == VERIFIER_VALID_PROOF) {
 
-            std::cerr << "Result: Valid proof" << std::endl;
-            return EXIT_SUCCESS;
+    //         std::cerr << "Result: Valid proof" << std::endl;
+    //         return EXIT_SUCCESS;
 
-        } else if (error == VERIFIER_INVALID_PROOF) {
+    //     } else if (error == VERIFIER_INVALID_PROOF) {
 
-            std::cerr << "Result: Invalid proof" << std::endl;
-            return EXIT_FAILURE;
+    //         std::cerr << "Result: Invalid proof" << std::endl;
+    //         return EXIT_FAILURE;
 
-        } else {
-            std::cerr << "Error: " << errorMessage << '\n';
-            return EXIT_FAILURE;
-        }
+    //     } else {
+    //         std::cerr << "Error: " << errorMessage << '\n';
+    //         return EXIT_FAILURE;
+    //     }
 
     } catch (std::exception* e) {
         std::cerr << "Error: " << e->what() << std::endl;

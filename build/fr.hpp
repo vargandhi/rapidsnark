@@ -202,6 +202,7 @@ void Fr_mod(PFrElement r, PFrElement a, PFrElement b);
 void Fr_inv(PFrElement r, PFrElement a);
 void Fr_div(PFrElement r, PFrElement a, PFrElement b);
 void Fr_pow(PFrElement r, PFrElement a, PFrElement b);
+bool Fr_reInit();
 
 class RawFr {
 

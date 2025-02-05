@@ -360,6 +360,7 @@ template <typename Engine>
 Verifier<Engine>::Verifier()
     : E(Engine::engine)
 {
+    //printf("Initializing verifier\n");
     E.f2.fromString(xiToPMinus1Over3,
                     "21575463638280843010398324269430826099269044274347216827212613867836435027261,"
                     "10307601595873709700152284273816112264069230130616436755625194854815875713954");
@@ -377,6 +378,8 @@ bool Verifier<Engine>::verify(Proof<Engine> &proof, InputsVector &inputs,
                              VerificationKey<Engine> &key)
 {
     if (inputs.size() + 1 != key.IC.size()) {
+        //printf("inputs length: %zu\n", inputs.size());
+        //printf("IC length: %zu\n", key.IC.size());
         throw std::invalid_argument("len(inputs)+1 != len(vk.IC)");
     }
 

@@ -16,6 +16,7 @@ using json = nlohmann::json;
 struct Groth16ProofResult {
     std::string proof;         // The generated proof in JSON format
     std::string publicInputs;  // The public inputs in JSON format
+    std::vector<uint8_t> wtnsBinary; // raw witness binary
     std::string errorMsg;      // Error message (empty if success)
     bool success;              // Whether proof generation succeeded
 };
@@ -180,13 +181,18 @@ public:
         }
 
         AltBn128::FrElement *wtnsData = (AltBn128::FrElement *)wtns.getSectionData(2);
+       
+        
+        
 
         auto proof = prover->prove(wtnsData);
 
         stringProof = proof->toJson().dump();
         stringPublic = BuildPublicString(wtnsData, zkeyHeader->nPublic);
+    
+    
+    
     }
-
     unsigned long long proofBufferMinSize() const
     {
         return ProofBufferMinSize();
@@ -195,7 +201,7 @@ public:
     unsigned long long publicBufferMinSize() const
     {
         return PublicBufferMinSize(zkeyHeader->nPublic);
-    }
+    } 
 };
 
 int
@@ -542,7 +548,10 @@ Groth16ProofResult generate_groth16_proof(
         result.proof = std::string(proofBuffer.data(), proofSize);
         result.publicInputs = std::string(publicBuffer.data(), publicSize);
         result.success = true;
-    
+        result.wtnsBinary.resize(wtnsData.size());  
+        memcpy(result.wtnsBinary.data(), wtnsData.data(), wtnsData.size());
+        //printf("copying binary witness\n");
+
     }catch (const std::exception &e) {
         result.errorMsg = e.what();
     }
@@ -551,12 +560,21 @@ Groth16ProofResult generate_groth16_proof(
 }
 
 
+
+
+
 namespace rapidsnark {
         Groth16ProofResultFFI generate_groth16_proof_ffi(
         const char *zkey_data, unsigned long long zkey_size,
         const char *wtns_data, unsigned long long wtns_size)
     {
         Groth16ProofResultFFI result;
+        result.proof = nullptr;
+        result.public_inputs = nullptr;
+        result.error_msg = nullptr;
+        result.wtns_binary = nullptr;
+        result.wtns_binary_size = 0;
+        result.success = 0;
 
         try {
             // Convert raw buffers to std::vector<char>
@@ -576,6 +594,13 @@ namespace rapidsnark {
             // Allocate proof and public input buffers
             result.proof = strdup(proofResult.proof.c_str());
             result.public_inputs = strdup(proofResult.publicInputs.c_str());
+            // ✅ Copy witness binary data
+            if (!proofResult.wtnsBinary.empty()) {
+                result.wtns_binary_size = proofResult.wtnsBinary.size();
+                result.wtns_binary = static_cast<unsigned char *>(malloc(result.wtns_binary_size));
+                memcpy(result.wtns_binary, proofResult.wtnsBinary.data(), result.wtns_binary_size);
+            }
+
             result.error_msg = nullptr;
             result.success = 1;
 
@@ -593,6 +618,7 @@ namespace rapidsnark {
             if (result.proof) free(result.proof);
             if (result.public_inputs) free(result.public_inputs);
             if (result.error_msg) free(result.error_msg);
+            if (result.wtns_binary) free(result.wtns_binary); 
         }
 
     }

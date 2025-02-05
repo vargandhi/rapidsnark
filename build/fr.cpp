@@ -38,6 +38,26 @@ void Fr_fromMpz(PFrElement pE, mpz_t v) {
 }
 
 
+bool Fr_reInit() { 
+    mpz_init(q);
+    if (Fr_q.longVal == nullptr) {
+        printf("Fr_q is not initialized before Fr_init!\n");
+        throw std::runtime_error("Fr_q is not initialized");
+    }
+    mpz_import(q, Fr_N64, -1, 8, -1, 0, (const void *)Fr_q.longVal);
+    //printf("q: %s\n", mpz_get_str (0, 10, q));
+    mpz_init_set_ui(zero, 0);
+    mpz_init_set_ui(one, 1);
+    nBits = mpz_sizeinbase (q, 2);
+    mpz_init(mask);
+    mpz_mul_2exp(mask, one, nBits);
+    mpz_sub(mask, mask, one);
+    //printf("Fr_init is complete\n");
+    //fflush(stdout);
+    initialized = true;
+    return true;
+}
+
 bool Fr_init() {
     if (initialized) return false;
     initialized = true;
@@ -183,6 +203,10 @@ RawFr::~RawFr() {
 void RawFr::fromString(Element &r, const std::string &s, uint32_t radix) {
     mpz_t mr;
     mpz_init_set_str(mr, s.c_str(), radix);
+    if (mpz_cmp_ui(q, 0) == 0) {
+        printf("Modulus q is not initialized\n");
+        throw std::runtime_error("Modulus q is not initialized");
+    }
     mpz_fdiv_r(mr, mr, q);
     for (int i=0; i<Fr_N64; i++) r.v[i] = 0;
     mpz_export((void *)(r.v), NULL, -1, 8, -1, 0, mr);
