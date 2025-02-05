@@ -67,8 +67,8 @@ namespace rapidsnark {
      */
     struct VerifyResult verify_proof(
         const char *proof,
-        const unsigned char *wtns_binary,  //  Updated to accept witness binary
-        size_t wtns_size,                  //  Added witness size parameter
+        // const unsigned char *wtns_binary,  //  Updated to accept witness binary
+        // size_t wtns_size,                  //  Added witness size parameter
         const char *inputs_json,            //  Added JSON public inputs
         const char *verification_key);
 

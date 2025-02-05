@@ -548,8 +548,8 @@ Groth16ProofResult generate_groth16_proof(
         result.proof = std::string(proofBuffer.data(), proofSize);
         result.publicInputs = std::string(publicBuffer.data(), publicSize);
         result.success = true;
-        result.wtnsBinary.resize(wtnsData.size());  
-        memcpy(result.wtnsBinary.data(), wtnsData.data(), wtnsData.size());
+        // result.wtnsBinary.resize(wtnsData.size());  
+        // memcpy(result.wtnsBinary.data(), wtnsData.data(), wtnsData.size());
         //printf("copying binary witness\n");
 
     }catch (const std::exception &e) {
@@ -572,8 +572,8 @@ namespace rapidsnark {
         result.proof = nullptr;
         result.public_inputs = nullptr;
         result.error_msg = nullptr;
-        result.wtns_binary = nullptr;
-        result.wtns_binary_size = 0;
+        // result.wtns_binary = nullptr;
+        // result.wtns_binary_size = 0;
         result.success = 0;
 
         try {
@@ -593,13 +593,14 @@ namespace rapidsnark {
 
             // Allocate proof and public input buffers
             result.proof = strdup(proofResult.proof.c_str());
+            
             result.public_inputs = strdup(proofResult.publicInputs.c_str());
-            // ✅ Copy witness binary data
-            if (!proofResult.wtnsBinary.empty()) {
-                result.wtns_binary_size = proofResult.wtnsBinary.size();
-                result.wtns_binary = static_cast<unsigned char *>(malloc(result.wtns_binary_size));
-                memcpy(result.wtns_binary, proofResult.wtnsBinary.data(), result.wtns_binary_size);
-            }
+            // // Copy witness binary data
+            // if (!proofResult.wtnsBinary.empty()) {
+            //     result.wtns_binary_size = proofResult.wtnsBinary.size();
+            //     result.wtns_binary = static_cast<unsigned char *>(malloc(result.wtns_binary_size));
+            //     memcpy(result.wtns_binary, proofResult.wtnsBinary.data(), result.wtns_binary_size);
+            // }
 
             result.error_msg = nullptr;
             result.success = 1;
@@ -618,7 +619,7 @@ namespace rapidsnark {
             if (result.proof) free(result.proof);
             if (result.public_inputs) free(result.public_inputs);
             if (result.error_msg) free(result.error_msg);
-            if (result.wtns_binary) free(result.wtns_binary); 
+            // if (result.wtns_binary) free(result.wtns_binary); 
         }
 
     }

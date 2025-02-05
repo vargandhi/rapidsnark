@@ -193,8 +193,8 @@ namespace rapidsnark {
     // Library function to verify a Groth16 proof (FFI-Compatible)
     VerifyResult verify_proof(
     const char* proof, 
-    const unsigned char* wtns_binary,  //  Witness binary data
-    size_t wtns_size,                  //  Witness binary size
+    // const unsigned char* wtns_binary,  //  Witness binary data
+    // size_t wtns_size,                  //  Witness binary size
     const char* inputs_json,            //  JSON string of public inputs
     const char* key) {
 
@@ -208,7 +208,7 @@ namespace rapidsnark {
         // std::cerr << "[DEBUG] Verification Key length: " << (key ? strlen(key) : 0) << std::endl;
 
         //  Check for null inputs
-        if (!proof || !wtns_binary || !inputs_json || !key) {
+        if (!proof || !inputs_json || !key) {
             std::cerr << "[ERROR] NULL pointer received in verify_proof!" << std::endl;
             return {VERIFIER_ERROR, strdup("Null pointer received")}; // Return safe error message
         }
@@ -248,7 +248,7 @@ namespace rapidsnark {
     // Function to free the dynamically allocated message
     void free_verify_result(VerifyResult result) {
         if (result.message) {
-            std::cerr << "[DEBUG] Freeing message: " << result.message << std::endl;
+            //std::cerr << "[DEBUG] Freeing message: " << result.message << std::endl;
             free(result.message);
         }
     }
